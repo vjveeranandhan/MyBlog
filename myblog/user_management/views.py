@@ -40,6 +40,13 @@ class LoginAPI(APIView):
         token, _= Token.objects.get_or_create(user= user)
 
         return Response({'message': 'Login successful', 'token': str(token)}, status= status.HTTP_201_CREATED)
+    
+class LogoutAPI(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    def post(self, request):
+        request.user.auth_token.delete()
+        return Response({'message': 'Succesfully Logged out'}, status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST'])
 def index(request):
