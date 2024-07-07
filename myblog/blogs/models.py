@@ -8,3 +8,12 @@ class Blogs(models.Model):
     content = models.TextField()
     publication_date = models.DateField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class Comments(models.Model):
+    blog_id = models.ForeignKey(Blogs, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'Comment by {self.author.username} on {self.blog.title}'
