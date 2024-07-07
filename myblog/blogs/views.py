@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
-from .serializer import BlogSerializer, BlogPostSerializer
+from .serializer import BlogSerializer
 from rest_framework import status
 from . models import Blogs
 from rest_framework.views import APIView
@@ -9,24 +9,18 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 # Create your views here.
 
-class BlogsAPI(APIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
-
-    def get(self, request):
-        blogs = Blogs.objects.all()
-        serializer = BlogSerializer(blogs, many=True)
-        return Response(serializer.data)
-    
-    def post(self, request):
-        print("Inside post function")
-        _data = request.data
-        print(_data)
-        serializer = BlogPostSerializer(data= _data)
-        if not serializer.is_valid():
-            return Response({'message': serializer.errors}, status= status.HTTP_400_BAD_REQUEST)
-        serializer.save()
-        return Response(serializer.data)
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def create_blog(request):
+    print("inside create blog")
+    if request.method == 'POST':
+        data = request.data
+        serializer = BlogSerializer(data= data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -43,20 +37,9 @@ def get_blogs(request):
             serialized_blogs = BlogSerializer(all_blogs_obj, many=True)
         return Response(serialized_blogs.data)
 
-@api_view(['POST'])
+@api_view(['PUT', 'PATCH'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def create_blog(request):
-    print("inside create blog")
-    if request.method == 'POST':
-        data = request.data
-        serializer = BlogSerializer(data= data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
-
-@api_view(['PUT', 'PATCH'])
 def edit_blog(request):
     if request.method == 'PUT':
         data = request.data
@@ -76,10 +59,12 @@ def edit_blog(request):
         return Response(serializer.errors)
     
 @api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def delete_blog(request):
     if request.method == 'DELETE':
         data = request.data
         if data['id']:
             blog_obj = Blogs.objects.get(id= data['id'])
             blog_obj.delete()
-        return Response({'message':'Person deleted'})
+        return Response({'message':'Blog deleted', 'id': data['id']})

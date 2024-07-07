@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Blogs(models.Model):
-    id = models.IntegerField(primary_key= True)
     title = models.CharField(max_length=200)
     content = models.TextField()
     publication_date = models.DateField(auto_now_add=True)

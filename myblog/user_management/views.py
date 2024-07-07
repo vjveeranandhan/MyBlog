@@ -10,9 +10,6 @@ from rest_framework.authentication import TokenAuthentication
 
 class RegisterAPI(APIView):
     permission_classes = []
-    # permission_classes = [IsAuthenticated]
-    # authentication_classes = [TokenAuthentication]
-
     def post(self, request):
         _data = request.data
         serializer = RegisterSerializer(data= _data)
@@ -47,47 +44,3 @@ class LogoutAPI(APIView):
     def post(self, request):
         request.user.auth_token.delete()
         return Response({'message': 'Succesfully Logged out'}, status=status.HTTP_200_OK)
-
-@api_view(['GET', 'POST'])
-def index(request):
-     if request.method == 'GET':
-        student = {
-            "student_id": 123456,
-            "first_name": "John",
-            "last_name": "Doe",
-            "age": 20,
-            "email": "john.doe@example.com",
-            "courses": ["Mathematics", "Physics", "Computer Science"],
-            "grades": {
-                "Mathematics": "A",
-                "Physics": "B+",
-                "Computer Science": "A-"
-            },
-            "address": {
-                "street": "123 Main Street",
-                "city": "Anytown",
-                "state": "CA",
-                "zipcode": "12345"
-            }}
-     if request.method == 'POST':
-         student = {
-            "student_id": 987654,
-            "first_name": "Jane",
-            "last_name": "Smith",
-            "age": 22,
-            "email": "jane.smith@example.com",
-            "courses": ["History", "Literature", "Art"],
-            "grades": {
-                "History": "B",
-                "Literature": "A-",
-                "Art": "B+"
-            },
-            "address": {
-                "street": "456 Oak Avenue",
-                "city": "Sometown",
-                "state": "NY",
-                "zipcode": "54321"
-            }
-            }
-
-     return Response(student)
