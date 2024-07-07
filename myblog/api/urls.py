@@ -14,7 +14,4 @@ urlpatterns = [
 
     path('create-comment/', create_comment, name='create_comment'),       #comment
     path('delete-comment/', delete_comment, name='delete_comment'),       #comment
-    # path('all-blogs/', get_blogs, name='get_blogs'),       #Blog
-    # path('all-blogs/', get_blogs, name='get_blogs'),       #Blog
-    # path('all-blogs/', get_blogs, name='get_blogs'),       #Blog
 ]
