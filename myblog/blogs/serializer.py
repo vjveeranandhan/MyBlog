@@ -13,7 +13,7 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comments
         fields = ['id', 'blog_id', 'text', 'created_at', 'author']
         depth = 1
-    author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    # author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     blog_id = serializers.PrimaryKeyRelatedField(queryset=Blogs.objects.all())
 
 class BlogSerializer(serializers.ModelSerializer):
@@ -22,7 +22,7 @@ class BlogSerializer(serializers.ModelSerializer):
         model = Blogs
         fields = ['id', 'title', 'content', 'publication_date', 'author']
         depth = 1
-    author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    # author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     def __str__(self):
         return self.title
