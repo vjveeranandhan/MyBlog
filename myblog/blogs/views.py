@@ -5,12 +5,14 @@ from rest_framework import status
 from . models import Blogs, Comments
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from django_ratelimit.decorators import ratelimit
 # Create your views here.
 
 # Blog CRED Operations
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
+@ratelimit(key='ip', rate='5/m', block=True)
 def create_blog(request):
     try:
         if request.method == 'POST':
@@ -28,6 +30,7 @@ def create_blog(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
+@ratelimit(key='ip', rate='5/m', block=True)
 def get_blogs(request):
     try:
         if request.method == 'GET':
@@ -50,6 +53,7 @@ def get_blogs(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
+@ratelimit(key='ip', rate='5/m', block=True)
 def get_my_blogs(request):
     try:
         if request.method == 'GET':
@@ -69,6 +73,7 @@ def get_my_blogs(request):
 @api_view(['PUT', 'PATCH'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
+@ratelimit(key='ip', rate='5/m', block=True)
 def edit_blog(request):
     try:
         _data = request.data
@@ -103,6 +108,7 @@ def edit_blog(request):
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
+@ratelimit(key='ip', rate='5/m', block=True)
 def delete_blog(request):
     try:
         if request.method == 'DELETE':
@@ -124,6 +130,7 @@ def delete_blog(request):
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
+@ratelimit(key='ip', rate='5/m', block=True)
 def create_comment(request):
     try:
         if request.method == 'POST':
@@ -142,6 +149,7 @@ def create_comment(request):
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
+@ratelimit(key='ip', rate='5/m', block=True)
 def delete_comment(request):
     try:
         if request.method == 'DELETE':
