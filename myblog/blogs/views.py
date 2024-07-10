@@ -73,19 +73,21 @@ def edit_blog(request):
     try:
         _data = request.data
         if request.method == 'PUT':
-            if 'id' in _data:
-                blog_object = Blogs.objects.get(id=_data['id'])
-                serializer = BlogSerializer(blog_object, data= _data, partial= False)
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response(serializer.data, status=status.HTTP_200_OK)
-                return Response(serializer.errors)
+            if 'id' in _data and 'author' in _data:
+                blog_object = Blogs.objects.filter(id=_data['id'], author = _data['author']).first()
+                if blog_object:
+                    serializer = BlogSerializer(blog_object, data=_data)
+                    if serializer.is_valid():
+                        serializer.save()
+                        return Response(serializer.data, status=status.HTTP_200_OK)
+                    return Response(serializer.errors)
+                return Response([], status=status.HTTP_200_OK)
             else:
                 return Response({'message': 'id is missing'}, status= status.HTTP_400_BAD_REQUEST)
 
         elif request.method == 'PATCH':
             if 'id' in _data:
-                blog_object = Blogs.objects.get(id=_data['id'])
+                blog_object = Blogs.objects.filter(id=_data['id']).first()
                 serializer = BlogSerializer(blog_object, data= _data, partial= True)
                 if serializer.is_valid():
                     serializer.save()
