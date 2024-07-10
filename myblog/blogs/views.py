@@ -38,7 +38,10 @@ def get_blogs(request):
             if 'id' in data:
                 all_blogs_obj = Blogs.objects.filter(id= data['id']).first()
                 if all_blogs_obj:
+                    comment_obj = Comments.objects.filter(blog_id = all_blogs_obj.id).all()
+                    serialized_comment =  CommentSerializer(comment_obj, many= True)
                     serialized_blogs = BlogSerializer(all_blogs_obj, many=False)
+                    return Response({'blog':serialized_blogs.data, 'comments':serialized_comment.data}, status=status.HTTP_200_OK)    
                 else:
                     return Response(status= status.HTTP_400_BAD_REQUEST)
             else:
