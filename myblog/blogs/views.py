@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from .serializer import BlogSerializer, CommentSerializer
@@ -25,7 +24,7 @@ def create_blog(request):
             return Response(status= status.HTTP_405_METHOD_NOT_ALLOWED)
     except:
         return Response(status= status.HTTP_400_BAD_REQUEST)
-    
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -47,6 +46,25 @@ def get_blogs(request):
             return Response(status= status.HTTP_405_METHOD_NOT_ALLOWED)
     except:
             return Response(status= status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_my_blogs(request):
+    try:
+        if request.method == 'GET':
+            _data = request.data
+            if 'auther_id' in _data:
+                all_blogs_obj = Blogs.objects.filter(author= _data['auther_id']).all()
+                serialized_blogs = BlogSerializer(all_blogs_obj, many=True)
+                return Response(serialized_blogs.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'author id is missing'}, status= status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status= status.HTTP_405_METHOD_NOT_ALLOWED)
+    except:
+        return Response(status= status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['PUT', 'PATCH'])
 @authentication_classes([TokenAuthentication])
