@@ -36,7 +36,7 @@ class LoginAPI(APIView):
 
         token, _= Token.objects.get_or_create(user= user)
 
-        return Response({'message': 'Login successful', 'token': str(token)}, status= status.HTTP_201_CREATED)
+        return Response({'message': 'Login successful', 'token': str(token), 'user_id': user.id }, status= status.HTTP_201_CREATED)
     
 class LogoutAPI(APIView):
     permission_classes = [IsAuthenticated]
