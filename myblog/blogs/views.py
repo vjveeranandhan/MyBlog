@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
-from .serializer import BlogSerializer, CommentSerializer
+from .serializer import BlogSerializer, CommentSerializer, GetBlogSerializer
 from rest_framework import status
 from . models import Blogs, Comments
 from rest_framework.permissions import IsAuthenticated
@@ -17,6 +17,7 @@ def create_blog(request):
     try:
         if request.method == 'POST':
             data = request.data
+            print("data", data)
             serializer = BlogSerializer(data= data)
             if serializer.is_valid():
                 serializer.save()
@@ -40,13 +41,13 @@ def get_blogs(request):
                 if all_blogs_obj:
                     comment_obj = Comments.objects.filter(blog_id = all_blogs_obj.id).all()
                     serialized_comment =  CommentSerializer(comment_obj, many= True)
-                    serialized_blogs = BlogSerializer(all_blogs_obj, many=False)
+                    serialized_blogs = GetBlogSerializer(all_blogs_obj, many=False)
                     return Response({'blog':serialized_blogs.data, 'comments':serialized_comment.data}, status=status.HTTP_200_OK)    
                 else:
                     return Response(status= status.HTTP_400_BAD_REQUEST)
             else:
                 all_blogs_obj = Blogs.objects.all()
-                serialized_blogs = BlogSerializer(all_blogs_obj, many=True)
+                serialized_blogs = GetBlogSerializer(all_blogs_obj, many=True, context={'request_type': 'GET'})
             return Response(serialized_blogs.data, status=status.HTTP_200_OK)    
         else:
             return Response(status= status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -60,9 +61,9 @@ def get_blogs(request):
 def get_my_blogs(request):
     try:
         if request.method == 'GET':
-            _data = request.data
-            if 'auther_id' in _data:
-                all_blogs_obj = Blogs.objects.filter(author= _data['auther_id']).all()
+            author_id = request.query_params.get('author_id')
+            if author_id:
+                all_blogs_obj = Blogs.objects.filter(author= author_id).all()
                 serialized_blogs = BlogSerializer(all_blogs_obj, many=True)
                 return Response(serialized_blogs.data, status=status.HTTP_200_OK)
             else:

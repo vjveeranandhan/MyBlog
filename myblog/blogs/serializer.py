@@ -23,7 +23,11 @@ class BlogSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'content', 'publication_date', 'author']
         depth = 1
     author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-
-    def __str__(self):
-        return self.title
     
+class GetBlogSerializer(serializers.ModelSerializer):
+    author = UserSerializer()
+    class Meta:
+        model = Blogs
+        fields = ['id', 'title', 'content', 'publication_date', 'author']
+        depth = 1
+    # author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
