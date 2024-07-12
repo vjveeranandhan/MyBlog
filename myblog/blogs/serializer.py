@@ -16,6 +16,15 @@ class CommentSerializer(serializers.ModelSerializer):
     # author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     blog_id = serializers.PrimaryKeyRelatedField(queryset=Blogs.objects.all())
 
+class GetCommentSerializer(serializers.ModelSerializer):
+    author = UserSerializer()
+    class Meta:
+        model = Comments
+        fields = ['id', 'blog_id', 'text', 'created_at', 'author']
+        depth = 1
+    author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    blog_id = serializers.PrimaryKeyRelatedField(queryset=Blogs.objects.all())
+
 class BlogSerializer(serializers.ModelSerializer):
     author = UserSerializer()
     class Meta:

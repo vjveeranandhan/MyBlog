@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
-from .serializer import BlogSerializer, CommentSerializer, GetBlogSerializer
+from .serializer import BlogSerializer, CommentSerializer, GetBlogSerializer, GetCommentSerializer
 from rest_framework import status
 from . models import Blogs, Comments
 from rest_framework.permissions import IsAuthenticated
@@ -12,7 +12,7 @@ from django_ratelimit.decorators import ratelimit
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-@ratelimit(key='ip', rate='5/m', block=True)
+@ratelimit(key='ip', rate='10/m', block=True)
 def create_blog(request):
     try:
         if request.method == 'POST':
@@ -31,13 +31,15 @@ def create_blog(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-@ratelimit(key='ip', rate='5/m', block=True)
+@ratelimit(key='ip', rate='10/m', block=True)
 def get_blogs(request):
     try:
         if request.method == 'GET':
             data = request.data
-            if 'id' in data:
-                all_blogs_obj = Blogs.objects.filter(id= data['id']).first()
+            id = request.query_params.get('id')
+            print(id)
+            if id:
+                all_blogs_obj = Blogs.objects.filter(id= id).first()
                 if all_blogs_obj:
                     comment_obj = Comments.objects.filter(blog_id = all_blogs_obj.id).all()
                     serialized_comment =  CommentSerializer(comment_obj, many= True)
@@ -57,7 +59,7 @@ def get_blogs(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-@ratelimit(key='ip', rate='5/m', block=True)
+@ratelimit(key='ip', rate='10/m', block=True)
 def get_my_blogs(request):
     try:
         if request.method == 'GET':
@@ -77,7 +79,7 @@ def get_my_blogs(request):
 @api_view(['PUT', 'PATCH'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-@ratelimit(key='ip', rate='5/m', block=True)
+@ratelimit(key='ip', rate='10/m', block=True)
 def edit_blog(request):
     try:
         _data = request.data
@@ -112,7 +114,7 @@ def edit_blog(request):
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-@ratelimit(key='ip', rate='5/m', block=True)
+@ratelimit(key='ip', rate='10/m', block=True)
 def delete_blog(request):
     try:
         if request.method == 'DELETE':
@@ -134,12 +136,12 @@ def delete_blog(request):
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-@ratelimit(key='ip', rate='5/m', block=True)
+@ratelimit(key='ip', rate='10/m', block=True)
 def create_comment(request):
     try:
         if request.method == 'POST':
             _data = request.data
-            serializer = CommentSerializer(data= _data)
+            serializer = GetCommentSerializer(data= _data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status= status.HTTP_201_CREATED)
@@ -153,7 +155,7 @@ def create_comment(request):
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-@ratelimit(key='ip', rate='5/m', block=True)
+@ratelimit(key='ip', rate='10/m', block=True)
 def delete_comment(request):
     try:
         if request.method == 'DELETE':
